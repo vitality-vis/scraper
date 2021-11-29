@@ -38,3 +38,26 @@ These files contain the scraper code to scrape abstracts, citations, and keyword
 
 ### Note: 
 The scrapers access digital libraries (e.g., IEEE Xplore, ACM Digital Library) and download the _abstracts_, _keywords_, and _citationCounts_ for different articles. These data are readily available  and publicly accessible, that is, do not require any subscriptions, be it paid or free. We do not own the rights to the scraped data and make it available for research purpose only. Also, before running the scrapers, please review the bot policies of the target websites (e.g., robot.txt) to not overwhelm their servers and be in violation.
+
+
+### Credits
+vitaLITy was created by 
+<a target="_blank" href="https://www.cc.gatech.edu/~anarechania3">Arpit Narechania</a>, <a target="_blank" href="https://www.karduni.com/">Alireza Karduni</a>, <a target="_blank" href="https://wesslen.netlify.app/">Ryan Wesslen</a>, and <a target="_blank" href="https://emilywall.github.io/">Emily Wall</a>.
+
+##### Citation
+```bibTeX
+@article{narechania2021vitality,
+  title={vitaLITy: Promoting Serendipitous Discovery of Academic Literature with Transformers \& Visual Analytics},
+  author={Narechania, Arpit and Karduni, Alireza and Wesslen, Ryan and Wall, Emily},
+  journal={IEEE Transactions on Visualization and Computer Graphics},
+  year={2021},
+  doi={10.1109/TVCG.2021.3114820},
+  publisher={IEEE}
+}
+```
+
+### License
+The software is available under the [MIT License](https://github.com/vitality-vis/scraper/blob/master/LICENSE).
+
+### Contact
+If you have any questions, feel free to [open an issue](https://github.com/vitality-vis/scraper/issues/new/choose) or contact [Arpit Narechania](https://www.cc.gatech.edu/~anarechania3).
