@@ -44,7 +44,8 @@ The scrapers access digital libraries (e.g., IEEE Xplore, ACM Digital Library) a
 vitaLITy was created by 
 <a target="_blank" href="https://www.cc.gatech.edu/~anarechania3">Arpit Narechania</a>, <a target="_blank" href="https://www.karduni.com/">Alireza Karduni</a>, <a target="_blank" href="https://wesslen.netlify.app/">Ryan Wesslen</a>, and <a target="_blank" href="https://emilywall.github.io/">Emily Wall</a>.
 
-##### Citation
+
+### Citation
 ```bibTeX
 @article{narechania2021vitality,
   title={vitaLITy: Promoting Serendipitous Discovery of Academic Literature with Transformers \& Visual Analytics},
@@ -58,6 +59,7 @@ vitaLITy was created by
 
 ### License
 The software is available under the [MIT License](https://github.com/vitality-vis/scraper/blob/master/LICENSE).
+
 
 ### Contact
 If you have any questions, feel free to [open an issue](https://github.com/vitality-vis/scraper/issues/new/choose) or contact [Arpit Narechania](https://www.cc.gatech.edu/~anarechania3).
