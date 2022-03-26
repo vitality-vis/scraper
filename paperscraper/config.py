@@ -1,25 +1,27 @@
-import os
+from pathlib import Path
 
-# ToDo: [Update as required] Paths to important input/output files
-path_input_raw = os.path.join("..", "assets", "data", "dblp-2020-11-01.xml")
-path_input = os.path.join("..", "assets", "data", "dblp_processed.xml")
-path_output = os.path.join("..", "output", "output.tsv")
-path_postprocessing_output = os.path.join("..", "output", "output_processed.tsv")
-path_unique_venues = os.path.join("..", "output", "unique_venues.tsv")
-path_unique_keywords = os.path.join("..", "output", "unique_keywords.tsv")
-path_unique_authors = os.path.join("..", "output", "unique_authors.tsv")
-path_logfile = os.path.join("..", "output", "log.tsv")
+_root_dir = Path(__file__).parent.parent
+# TODO: [Update as required] Paths to important input/output files
+# FIXME: automatically extract the latest
+path_input_raw = _root_dir / "assets" / "data" / "dblp-2022-03-01.xml"
+path_input = _root_dir / "assets" / "data" / "dblp_processed.xml"
+path_output = _root_dir / "output" / "output.tsv"
+path_postprocessing_output = _root_dir / "output" / "output_processed.tsv"
+path_unique_venues = _root_dir / "output" / "unique_venues.tsv"
+path_unique_keywords = _root_dir / "output" / "unique_keywords.tsv"
+path_unique_authors = _root_dir / "output"/ "unique_authors.tsv"
+path_logfile = _root_dir / "output" / "log.tsv"
 
 # ChromeDriver
 # TODO Option 1: Manual Download  from https://chromedriver.chromium.org/downloads (e.g., ChromeDriver 86.0.4240.22) and save to a known location in PATH
 # TODO Option 2: Install using brew: `brew cask install chromedriver`. It is generally saved to `/usr/local/bin/chromedriver`
 # For Mac OSX, the executable will have to be quarantined - `xattr -d com.apple.quarantine chromedriver`
 # Set the chromedriver path below.
-path_chromedriver = os.path.join("..", "assets", "chromedriver")  # /usr/local/bin/chromedriver
+path_chromedriver = _root_dir / "assets" / "chromedriver"  # /usr/local/bin/chromedriver
 
 # ChromeOptions binary
 # TODO: [Update this path depending on where it is located in your Operating System]
-path_chromeoptions_binary = os.path.join("/", "Applications", "Google Chrome.app", "Contents", "MacOS", "Google Chrome")
+path_chromeoptions_binary = Path("/") / "Applications" / "Google Chrome.app" / "Contents" / "MacOS" / "Google Chrome"
 
 # List of Venues we target with their DBLP category. This information can be found in the <path_unique_venues> path above.
 # TODO: [Update as required] Don't forget to add the corresponding logic to scrape keywords/absracts/titles/citations, etc.
