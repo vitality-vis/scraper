@@ -33,10 +33,16 @@ __scraper_filter = {
 }
 
 
-def get_processed_db(force:bool=False) -> Path:
+def get_processed_db(force: bool = False) -> Path:
+    """
+    Clean the raw file (set in config.path_input_raw) and writing it out to config.path_input.
+
+    Function is run only if config.path_input doesn't exsit or if `force` is True.
+    """
     if force or not config.path_input.exists():
         logger.info(f"Cleaning data from {config.path_input_raw} into {config.path_input}")
-        # This Regular Find+Replace replaces instances of &amp; between <ee></ee> tags with a SPECIAL TAG `%26`. This tag will be replaced back to `&` in the code later on.
+        # This Regular Find+Replace replaces instances of &amp; between <ee></ee> tags with a
+        # SPECIAL TAG `%26`. This tag will be replaced back to `&` in the code later on.
         regex_find = r'(<ee>.*)&amp;(.*</ee>)'
         regex_replace = r'\1%26\2'
 
@@ -51,18 +57,22 @@ def get_processed_db(force:bool=False) -> Path:
                         line = re.sub(regex_find, regex_replace, line)
 
                     processed_dblp.write(line)
-        
+
     return config.path_input
 
 
-# Find Unique venues from the DBLP xml looking ONLY for ["article","inproceedings","incollection"] and ["journal", "booktitle"].
 # TODO: Re-run this if (1) The above list has changed OR (2) There is a NEW DBLP snapshot.
-def get_unique_venues(force:bool=False) -> pd.DataFrame:
+def get_unique_venues(force: bool = False) -> pd.DataFrame:
+    """
+    Find Unique venues from the DBLP xml.
+
+    Looking ONLY for ["article","inproceedings","incollection"] and ["journal", "booktitle"].
+    """
     if force or not config.path_unique_venues.exists():
         logger.info(f"Extracting venues to {config.path_unique_venues}")
-        unique_sources = dict()
+        unique_sources: dict = {}
         for event, elem in tqdm(ET.iterparse(config.path_input, recover=True), desc="Entry"):
-            if elem.tag in ["article","inproceedings","incollection"]:
+            if elem.tag in ["article", "inproceedings", "incollection"]:
                 for child in elem.getchildren():
                     if child.tag in ["journal", "booktitle"]:
                         if child.text not in unique_sources:
@@ -85,15 +95,17 @@ def get_unique_venues(force:bool=False) -> pd.DataFrame:
     return df_unique_sources
 
 
-# FILTER the huge dblp_processed.xml file to keep just the data that we are interested in.
-# TODO: Re-run this if (1) The <config.interesting_venues> list has changed or (2) There is a NEW DBLP snapshot .
-def get_extracted_data(force:bool=False) -> pd.DataFrame:
+# TODO: Re-run this if
+#   (1) The <config.interesting_venues> list has changed or
+#   (2) There is a NEW DBLP snapshot.
+def get_extracted_data(force: bool = False) -> pd.DataFrame:
+    """FILTER the huge dblp_processed.xml file to keep just the data that we are interested in."""
     if force or not config.path_output.exists():
         logger.info(f"Extracting data to {config.path_output}")
         result_list = list()
         src_set = set()
         for event, elem in tqdm(ET.iterparse(config.path_input, encoding='UTF-8', recover=True), desc="Entry"):
-            obj = dict()
+            obj: dict = {}
             to_add = False
             for child in elem.getchildren():
                 if child.tag not in obj:
@@ -108,10 +120,10 @@ def get_extracted_data(force:bool=False) -> pd.DataFrame:
                     else:
                         obj[child.tag].append(child.text)
                 else:
-                    obj[child.tag] = child.text # title, year, pgs
+                    obj[child.tag] = child.text  # title, year, pgs
 
                 # Only consider adding entries from the source defined above
-                if child.text in config.interesting_venues and child.tag == config.interesting_venues[child.text]["sourcetype"]:
+                if (child.text in config.interesting_venues and child.tag == config.interesting_venues[child.text]["sourcetype"]):
                     obj["source"] = child.text
                     to_add = True
                     if child.text not in src_set:
@@ -152,8 +164,8 @@ def _get_webdriver_instance():
     return driver
 
 
-# Scrap the Abstracts, Keywords, and Citations
-def get_processed_data(force:bool=False) -> pd.DataFrame:
+def get_processed_data(force: bool = False) -> pd.DataFrame:
+    """Scrap the Abstracts, Keywords, and Citations."""
     if force or not config.path_output.exists():
         # Get a webdriver instance (Headless Chrome)
         logger.info(f"Processing data to {config.path_output}")
@@ -163,7 +175,7 @@ def get_processed_data(force:bool=False) -> pd.DataFrame:
         df_papers = pd.read_csv(config.path_output, sep='\t', header=0)
 
         # Initialize a log object to analyze the summary of a particular run.
-        log_obj = dict()
+        log_obj: dict = {}
 
         # Start scraping
         for index, row in tqdm(df_papers.iterrows(), desc="Papers", total=df_papers.shape[0]):
@@ -194,13 +206,13 @@ def get_processed_data(force:bool=False) -> pd.DataFrame:
                 urls = []
                 try:
                     urls = ast.literal_eval(row["ee"])
-                except Exception as e:
+                except Exception:
                     # If not ee, check url.
-                    # But, this doesn't have HTTP/HTTPS it seems to be following some Relative Paths from a BaseURL that is unknown.
-                    # Hence, it will fail 99% of the times.
+                    # But, this doesn't have HTTP/HTTPS it seems to be following some Relative Paths from a
+                    # BaseURL that is unknown. Hence, it will fail 99% of the times.
                     try:
                         urls = ast.literal_eval(row["url"])
-                    except:
+                    except Exception:
                         pass
 
                 # If there is No url OR If the URL begins with a db/, continue.
@@ -278,7 +290,7 @@ def get_processed_data(force:bool=False) -> pd.DataFrame:
                 for publisher in config.interesting_venues[row["source"]]["publishers"]:
                     try:
                         if publisher == "ieee_explore":
-                            driver.get(current_url+ "/keywords#keywords")
+                            driver.get(current_url + "/keywords#keywords")
                         elif publisher == "eurographics_digital_library":
                             driver.get(current_url + "?show=full")
                         else:
@@ -303,7 +315,7 @@ def get_processed_data(force:bool=False) -> pd.DataFrame:
                             log_obj[row["source"]]["keyword_fetch_errors"] += 1
                             log_obj[row["source"]]["keyword_errors"] += 1
 
-                    except Exception as e:
+                    except Exception:
                         pass
 
                 if not is_keyword:
