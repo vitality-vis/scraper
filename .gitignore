@@ -8,6 +8,9 @@ chromedriver
 .idea/
 *.pyc
 
+# include test files
+!test/assets/data/*.xml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
