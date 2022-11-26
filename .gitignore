@@ -4,6 +4,7 @@ chromedriver
 .DS_Store
 *.exe
 *.xml
+*.xml.gz
 *.log
 .idea/
 *.pyc
