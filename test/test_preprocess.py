@@ -1,7 +1,7 @@
 import pytest
 import shutil
 from pathlib import Path
-from paperscraper._preprocess import get_unique_venues, get_extracted_data
+from paperscraper._preprocess import get_extracted_data
 from paperscraper.config import Config
 
 
@@ -28,29 +28,19 @@ def test_config(request, tmp_path_factory):
     shutil.rmtree(str(output_dir))
 
 
-class Test_get_unique_venues:
-    def test_get_unique_venues_first(self, test_config):
-        result = get_unique_venues(test_config, force=True)
-        _len = len(result)
-        result.close(force=False)
-        assert _len == 4
-
-    def test_get_unique_venues_second(self, test_config):
-        result = get_unique_venues(test_config, force=False)
-        _len = len(result)
-        result.close(force=False)
-        assert _len == 4
-
-
 class Test_get_extracted_data:
+    def _get_extracted_data_results(self, data, venues):
+        _len_data = len(data)
+        data.close(force=True)
+        _len_venues = len(venues)
+        venues.close(force=True)
+        assert _len_data == 6
+        assert _len_venues == 4
+    
     def test_get_extracted_data_first(self, test_config):
-        result = get_extracted_data(test_config, force=True)
-        _len = len(result)
-        result.close(force=False)
-        assert _len == 6
+        data, venues = get_extracted_data(test_config, force=True)
+        self._get_extracted_data_results(data, venues)
 
     def test_get_extracted_data_second(self, test_config):
-        result = get_extracted_data(test_config, force=False)
-        _len = len(result)
-        result.close(force=False)
-        assert _len == 6
+        data, venues = get_extracted_data(test_config, force=False)
+        self._get_extracted_data_results(data, venues)

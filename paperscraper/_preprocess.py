@@ -63,18 +63,30 @@ def get_processed_db(force: bool = False) -> Path:
     return config.path_input
 
 
-# TODO: Re-run this if (1) The above list has changed OR (2) There is a NEW DBLP snapshot.
-def get_unique_venues(config: Config, force: bool = False) -> SqliteDict:
+# TODO: Re-run this if
+#   (1) The <config.interesting_venues> list has changed or
+#   (2) There is a NEW DBLP snapshot.
+def get_extracted_data(config: Config, force: bool = False) -> tuple[SqliteDict, SqliteDict]:
     """
-    Find Unique venues from the DBLP xml.
+    FILTER the huge dblp_processed.xml file to keep just the data that we are interested in and Find Unique venues from the DBLP xml.
 
-    Looking ONLY for ["article","inproceedings","incollection"] and ["journal", "booktitle"].
+    For unqiue venues looking ONLY for ["article","inproceedings","incollection"] and ["journal", "booktitle"].
     """
-    if force or not config.path_unique_venues.exists():
+    if force or not config.path_output.exists():
+        logger.info(f"Extracting venues to {config.path_unique_venues}")
         unique_sources = SqliteDict(config.path_unique_venues)
         unique_sources.clear()  # empty the db
-        logger.info(f"Extracting venues to {config.path_unique_venues}")
-        for event, elem in tqdm(ET.iterparse(config.path_input, recover=True), desc="Entry"):
+
+        logger.info(f"Extracting data to {config.path_output}")
+        result_list = SqliteDict(config.path_output)
+        result_list.clear()  # empty the db
+        src_set = set()
+
+        _idx: dict[int, int] = {0: 0}
+
+        for event, elem in tqdm(ET.iterparse(config.path_input, encoding='UTF-8', events=("end", ) ,recover=True), desc="Entry"):
+            _idx[0] += 1
+
             if elem.tag in ["article", "inproceedings", "incollection"]:
                 for child in elem.getchildren():
                     if child.tag in ["journal", "booktitle"]:
@@ -89,27 +101,6 @@ def get_unique_venues(config: Config, force: bool = False) -> SqliteDict:
                         child_dict["count"] += 1
                         unique_sources[child.text] = child_dict
 
-        logger.debug("Writing to disk")
-        # Save it to disk
-        unique_sources.commit()
-    else:
-        logger.info(f"Loading data from {config.path_unique_venues}")
-        unique_sources = SqliteDict(config.path_unique_venues)
-
-    return unique_sources
-
-
-# TODO: Re-run this if
-#   (1) The <config.interesting_venues> list has changed or
-#   (2) There is a NEW DBLP snapshot.
-def get_extracted_data(config: Config, force: bool = False) -> SqliteDict:
-    """FILTER the huge dblp_processed.xml file to keep just the data that we are interested in."""
-    if force or not config.path_output.exists():
-        logger.info(f"Extracting data to {config.path_output}")
-        result_list = SqliteDict(config.path_output)
-        result_list.clear()  # empty the db
-        src_set = set()
-        for _idx, (event, elem) in tqdm(enumerate(ET.iterparse(config.path_input, encoding='UTF-8', recover=True)), desc="Entry"):
             obj: dict = {}
             # Initialize the fields that we are going to scrape.
             # TODO: Update these if more fields are added.
@@ -141,20 +132,35 @@ def get_extracted_data(config: Config, force: bool = False) -> SqliteDict:
                         logger.debug(f"Adding source: {child.text}")
 
             if to_add:
-                result_list[_idx] = obj
+                result_list[_idx[0]] = obj
 
             # Periodically commiting stuff
-            if _idx % 100 == 0:
+            if _idx[0] % 200000 == 0:
+                unique_sources.commit()
                 result_list.commit()
+
+            # from https://stackoverflow.com/questions/7171140/using-python-iterparse-for-large-xml-files
+            # http://lxml.de/parsing.html#modifying-the-tree
+            # Based on Liza Daly's fast_iter
+            # http://www.ibm.com/developerworks/xml/library/x-hiperfparse/
+            # See also http://effbot.org/zone/element-iterparse.htm
+            # NOTE: deleting only the 2nd level nodes
+            if len(elem.getroottree().getpath(elem).split("/")) <= 3:
+                elem.clear()
+                while elem.getprevious() is not None:
+                    del elem.getparent()[0]
 
         logger.debug("Writing to disk")
         # Save to disk
+        unique_sources.commit()
         result_list.commit()
     else:
         logger.info(f"Loading data from {config.path_output}")
         result_list = SqliteDict(config.path_output)
+        logger.info(f"Loading data from {config.path_unique_venues}")
+        unique_sources = SqliteDict(config.path_unique_venues)
 
-    return result_list
+    return result_list, unique_sources
 
 
 # get a new headless Chrome driver
@@ -337,11 +343,11 @@ def get_processed_data(cofig: Config, force: bool = False) -> SqliteDict:
 
         # Persist the paper file
         papers_db.commit()
-        logger.i("scraped papers saved to disk.")
+        logger.info("scraped papers saved to disk.")
 
         # Persist Logs
         df_logs = pd.DataFrame.from_dict(log_obj, orient="index")
-        logger.i(log_obj)
+        logger.info(log_obj)
         df_logs.to_csv(config.path_logfile, sep='\t', header=True)
     else:
         logger.info(f"Loading processed data from {config.path_output}")
