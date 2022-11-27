@@ -1,4 +1,4 @@
-import ast
+import sys
 import re
 import time
 from pathlib import Path
@@ -13,6 +13,7 @@ from selenium.webdriver.chrome.service import Service
 from sqlitedict import SqliteDict
 from tqdm import tqdm
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from paperscraper.config import Config, config
 from paperscraper.scrapers.abstracts import get_abstract
@@ -167,16 +168,51 @@ def get_extracted_data(config: Config, force: bool = False) -> tuple[SqliteDict,
 def _get_webdriver_instance():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
+    chrome_desired_capabilities = DesiredCapabilities.CHROME
+    chrome_desired_capabilities['goog:loggingPrefs'] = { 'browser':'ALL' }
     # chrome_options.binary_location = config.path_chromeoptions_binary
     # driver = webdriver.chrome(executable_path=config.path_chromedriver, chrome_options=chrome_options)
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                               chrome_options=chrome_options)
     # driver.implicitly_wait(10000)
+    driver._old_get_method = driver.get
+    driver.get = lambda *args, **kwargs: get_browser_log_entries(driver, *args, **kwargs)
     return driver
 
 
-def get_processed_data(cofig: Config, force: bool = False) -> SqliteDict:
+def get_browser_log_entries(driver, *args, **kwargs):
+    """get log entreies from selenium and add to python logger before returning"""
+    ret_val = driver._old_get_method(*args, **kwargs)
+    loglevels = {
+        'NOTSET': 'TRACE' ,
+        'DEBUG': 'DEBUG' ,
+        'INFO': 'INFO' ,
+        'WARNING':'WARNING',
+        'ERROR': 'ERROR',
+        'SEVERE':'ERROR',
+        'CRITICAL':'CRITICAL'
+    }
+
+    #get browser logs
+    slurped_logs = driver.get_log('browser')
+    for entry in slurped_logs:
+        #convert broswer log to python log format
+        rec = logger.log(loglevels.get(entry['level']), "{}: {}".format(entry['source'], entry['message']))
+        # rec.created = entry['timestamp'] /1000 # log using original timestamp.. us -> ms
+        # try:
+        #     #add browser log to python log
+        #     browserlog.handle(rec)
+        # except:
+        #     print(entry)
+    #and return logs incase you want them
+    return ret_val
+
+
+def get_processed_data(config: Config, force: bool = False) -> SqliteDict:
     """Scrap the Abstracts, Keywords, and Citations."""
+
+    logger.add(config.path_console_log_file)
+
     if force or not config.path_output.exists():
         # Get a webdriver instance (Headless Chrome)
         logger.info(f"Processing data to {config.path_output}")
@@ -210,6 +246,7 @@ def get_processed_data(cofig: Config, force: bool = False) -> SqliteDict:
                     log_obj[row["source"]]["no_of_citations_fetch_errors"] = 0
                     log_obj[row["source"]]["no_of_citations_errors"] = 0
 
+                logger.debug("Processing {} ".format(row["title"]))
                 # Increment no of papers
                 log_obj[row["source"]]["papers"] += 1
 
@@ -247,7 +284,7 @@ def get_processed_data(cofig: Config, force: bool = False) -> SqliteDict:
                     abstract_soup = BeautifulSoup(driver.page_source, 'lxml')
 
                 except Exception as e:
-                    logger.error('Abstract: ' + str(e))
+                    logger.error(f'{index} Abstract: ' + str(e))
 
                 if abstract_soup is not None:
                     is_abstract = False
@@ -327,8 +364,8 @@ def get_processed_data(cofig: Config, force: bool = False) -> SqliteDict:
                             log_obj[row["source"]]["keyword_fetch_errors"] += 1
                             log_obj[row["source"]]["keyword_errors"] += 1
 
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.error(f'{index} Keywords: ' + str(e))
 
                 if not is_keyword:
                     row['keywords'] = "Error"

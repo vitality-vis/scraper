@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from typing import Union
 
@@ -32,7 +33,10 @@ class Config:
         self.path_unique_venues = output_dir / "unique_venues.db"
         self.path_unique_keywords = output_dir / "unique_keywords.tsv"
         self.path_unique_authors = output_dir/ "unique_authors.tsv"
-        self.path_logfile = output_dir / "log.tsv"
+
+        datetime_str = f"{datetime.now():%Y-%m-%d_%H-%M-%S%z}"
+        self.path_logfile = output_dir / f"log-{datetime_str}.tsv"
+        self.path_console_log_file = output_dir / f"console-{datetime_str}.log"
 
         # ChromeDriver
         # TODO Option 1: Manual Download  from https://chromedriver.chromium.org/downloads (e.g., ChromeDriver 86.0.4240.22) and save to a known location in PATH

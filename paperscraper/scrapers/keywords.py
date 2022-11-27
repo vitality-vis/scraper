@@ -1,10 +1,13 @@
 import re
+from loguru import logger
 
 regex = re.compile(r'[\n\r\t]')
 
 
 def acm_digital_library(soup):
     try:
+        # TODO: Get keyoards by clicking on the citation linke (soup.select('a[data-title="Export Citation"]'))
+        # Then using the the ActionChains from selenium to click, parse the bib result and get keywords
         keywords = set()
         keywords_parent_ol = soup.find('ol', class_="rlist organizational-chart")
         keywords_divs = keywords_parent_ol.findChildren('div', recursive=True)
@@ -13,12 +16,12 @@ def acm_digital_library(soup):
             keywords.add(regex.sub("", kw.split(",")[0]))
         return list(keywords)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def graphics_interface_proceedings(soup):
-    return None
+    return []
 
 
 def ieee_explore(soup):
@@ -36,8 +39,8 @@ def ieee_explore(soup):
                         keywords.add(str(regex.sub("", str(keywords_l.text).split(",")[0])))
         return list(keywords)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def eurographics_digital_library(soup):
@@ -65,8 +68,8 @@ def eurographics_digital_library(soup):
                     keywords_set.update(re.split(',|:|;', keywords_str))
         return list(keywords_set)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def springer_v2(soup):
@@ -78,8 +81,8 @@ def springer_v2(soup):
             keywords.add(k.text)
         return list(keywords)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def dagstuhl(soup):
@@ -91,8 +94,8 @@ def dagstuhl(soup):
         if keywords_font is not None:
             return re.split(',', keywords_font.text)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def springer_v1(soup):
@@ -105,8 +108,8 @@ def springer_v1(soup):
             keywords.add(str(regex.sub("", kw)).strip())
         return list(keywords)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def wiley_online_library(soup):
@@ -138,12 +141,12 @@ def wiley_online_library(soup):
 
         return list(keywords_set)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def cogsci(soup):
-    return None
+    return []
 
 
 def scitepress(soup):
@@ -154,8 +157,8 @@ def scitepress(soup):
             keywords_set.add(kw)
         return list(keywords_set)
     except Exception as e:
-        print(e)
-    return None
+        logger.error(e)
+    return []
 
 
 def scienceopen(soup):
@@ -168,11 +171,11 @@ def scienceopen(soup):
         return list(keywords_set)
     except Exception as e:
         pass
-    return None
+    return []
 
 
 def aaai(soup):
-    return None
+    return []
 
 
 def get_keywords(publisher, soup):
