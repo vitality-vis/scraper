@@ -253,13 +253,13 @@ def get_processed_data(config: Config, force: bool = False) -> SqliteDict:
                 # Get the URLs
                 urls = []
                 try:
-                    urls = ast.literal_eval(row["ee"])
+                    urls = row["ee"]
                 except Exception:
                     # If not ee, check url.
                     # But, this doesn't have HTTP/HTTPS it seems to be following some Relative Paths from a
                     # BaseURL that is unknown. Hence, it will fail 99% of the times.
                     try:
-                        urls = ast.literal_eval(row["url"])
+                        urls = row["url"]
                     except Exception:
                         pass
 
@@ -375,8 +375,7 @@ def get_processed_data(config: Config, force: bool = False) -> SqliteDict:
 
                 papers_db[index] = row
 
-                if index % 100 == 100:
-                    papers_db.commit()
+                papers_db.commit()
 
         # Persist the paper file
         papers_db.commit()
