@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE dblp SYSTEM "dblp-2019-11-22.dtd">
+<dblp>
+  <incollection mdate="2019-10-19" key="reference/sp/CantadorFBC15" publtype="encyclopedia">
+    <author>Iv&aacute;n Cantador</author>
+    <author>Ignacio Fern&aacute;ndez-Tob&iacute;as</author>
+    <author orcid="0000-0003-2638-4121">Shlomo Berkovsky</author>
+    <author orcid="0000-0002-1253-8081">Paolo Cremonesi</author>
+    <title>Cross-Domain Recommender Systems.</title>
+    <pages>919-959</pages>
+    <year>2015</year>
+    <booktitle>Recommender Systems Handbook</booktitle>
+    <ee>https://doi.org/10.1007/978-1-4899-7637-6_27</ee>
+    <crossref>reference/sp/2015rsh</crossref>
+    <url>db/reference/sp/rsh2015.html#CantadorFBC15</url>
+  </incollection>
+  <incollection mdate="2021-06-01" key="reference/sp/Nickerson13" publtype="encyclopedia">
+    <author orcid="0000-0001-8590-3898">Jeffrey V. Nickerson</author>
+    <title>Human-Based Evolutionary Computing.</title>
+    <pages>641-648</pages>
+    <year>2013</year>
+    <booktitle>Handbook of Human Computation</booktitle>
+    <ee>https://doi.org/10.1007/978-1-4614-8806-4_51</ee>
+    <ee>https://www.wikidata.org/entity/Q105641856</ee>
+    <crossref>reference/sp/2013hc</crossref>
+    <url>db/reference/sp/hc2013.html#Nickerson13</url>
+  </incollection>
+  <incollection mdate="2018-11-06" key="reference/sp/Buriol18" publtype="encyclopedia">
+    <author>Luciana S. Buriol</author>
+    <title>Network Optimization.</title>
+    <pages>1123-1140</pages>
+    <year>2018</year>
+    <booktitle>Handbook of Heuristics</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-07124-4_46</ee>
+    <crossref>reference/sp/2018heuristics</crossref>
+    <url>db/reference/sp/heuristics2018.html#Buriol18</url>
+  </incollection>
+  <incollection mdate="2017-07-12" key="reference/sp/FelfernigFJZ15" publtype="encyclopedia">
+    <author>Alexander Felfernig</author>
+    <author>Gerhard Friedrich</author>
+    <author>Dietmar Jannach</author>
+    <author>Markus Zanker</author>
+    <title>Constraint-Based Recommender Systems.</title>
+    <pages>161-190</pages>
+    <year>2015</year>
+    <booktitle>Recommender Systems Handbook</booktitle>
+    <ee>https://doi.org/10.1007/978-1-4899-7637-6_5</ee>
+    <crossref>reference/sp/2015rsh</crossref>
+    <url>db/reference/sp/rsh2015.html#FelfernigFJZ15</url>
+  </incollection>
+  <incollection mdate="2019-10-19" key="reference/sp/SandoyaMADM18" publtype="encyclopedia">
+    <author orcid="0000-0002-0011-4003">Fernando Sandoya</author>
+    <author>Anna Mart&iacute;nez-Gavara</author>
+    <author>Ricardo Aceves</author>
+    <author>Abraham Duarte</author>
+    <author>Rafael Mart&iacute;</author>
+    <title>Diversity and Equity Models.</title>
+    <pages>979-998</pages>
+    <year>2018</year>
+    <booktitle>Handbook of Heuristics</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-07124-4_61</ee>
+    <crossref>reference/sp/2018heuristics</crossref>
+    <url>db/reference/sp/heuristics2018.html#SandoyaMADM18</url>
+  </incollection>
+  <incollection mdate="2021-06-01" key="reference/sp/Gabora13" publtype="encyclopedia">
+    <author>Liane Gabora</author>
+    <title>Cultural Evolution as Distributed Computation.</title>
+    <pages>447-461</pages>
+    <year>2013</year>
+    <booktitle>Handbook of Human Computation</booktitle>
+    <ee>https://doi.org/10.1007/978-1-4614-8806-4_34</ee>
+    <ee>https://www.wikidata.org/entity/Q105641836</ee>
+    <crossref>reference/sp/2013hc</crossref>
+    <url>db/reference/sp/hc2013.html#Gabora13</url>
+  </incollection>
+  <incollection mdate="2018-11-06" key="reference/sp/TooleMGP18" publtype="encyclopedia">
+    <author>Jameson L. Toole</author>
+    <author>Yves-Alexandre de Montjoye</author>
+    <author>Marta C. Gonz&aacute;lez</author>
+    <author>Alex 'Sandy' Pentland</author>
+    <title>Modeling and Understanding Intrinsic Characteristics of Human Mobility.</title>
+    <pages>13-34</pages>
+    <year>2018</year>
+    <crossref>reference/sp/2018mdp</crossref>
+    <booktitle>Handbook of Mobile Data Privacy</booktitle>
+    <ee>https://doi.org/10.1007/978-3-319-98161-1_2</ee>
+    <url>db/reference/sp/mdp2018.html#TooleMGP18</url>
+  </incollection>
+</dblp>
