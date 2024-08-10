@@ -2,7 +2,7 @@
 import re
 
 # Internal modules
-import paperscraper.config as config
+import config
 
 
 # This Regular Find+Replace replaces instances of &amp; between <ee></ee> tags with a SPECIAL TAG `%26`. This tag will be replaced back to `&` in the code later on.

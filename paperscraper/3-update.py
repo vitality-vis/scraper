@@ -2,17 +2,23 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import pandas as pd
 import time
 import sys
 import os
 import ast
+import requests
+
 
 # Internal modules
-from paperscraper.scrapers.abstracts import get_abstract
-from paperscraper.scrapers.keywords import get_keywords
-from paperscraper.scrapers.citations import get_citation_count
-import paperscraper.config as config
+from scrapers.abstracts import get_abstract
+from scrapers.keywords import get_keywords
+from scrapers.citations import get_citation_count
+import config
 
 
 # get a new headless Chrome driver
@@ -20,7 +26,8 @@ def get_webdriver_instance():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.binary_location = config.path_chromeoptions_binary
-    driver = webdriver.Chrome(executable_path=config.path_chromedriver, chrome_options=chrome_options)
+    service = Service(executable_path=config.path_chromedriver)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     # driver.implicitly_wait(10000)
     return driver
 
@@ -87,7 +94,7 @@ def main():
                 driver.get(urls[0])
 
                 # Delay to ensure routings are complete, page renders
-                time.sleep(1.5)
+                time.sleep(10)
 
                 # Initialize the Soup object
                 abstract_soup = BeautifulSoup(driver.page_source, 'lxml')
@@ -99,7 +106,7 @@ def main():
                 is_abstract = False
                 for publisher in config.interesting_venues[row["source"]]["publishers"]:
                     abstract = get_abstract(publisher, abstract_soup)
-                    if abstract is not None:
+                    if abstract is not None and str(row["abstract"]) in __scraper_filter["abstract"]:
                         df_papers.at[index, 'abstract'] = abstract
                         print(str(index) + " [Success][Abstract] " + str(urls[0]) + " " + str(abstract)[:50])
                         is_abstract = True
@@ -123,7 +130,7 @@ def main():
                 is_citation = False
                 for publisher in config.interesting_venues[row["source"]]["publishers"]:
                     citation_count = get_citation_count(publisher, citation_soup)
-                    if citation_count is not None:
+                    if citation_count is not None and str(row["citation_count"]) in __scraper_filter["citation_count"]:
                         df_papers.at[index, 'citation_count'] = citation_count
                         print(str(index) + " [Success][Citation Count] " + str(urls[0]) + " " + str(citation_count))
                         is_citation = True
@@ -162,7 +169,7 @@ def main():
 
                     if keyword_soup is not None:
                         keywords_list = get_keywords(publisher, keyword_soup)
-                        if keywords_list is not None:
+                        if keywords_list is not None and str(row["keywords"]) in __scraper_filter["keywords"]:
                             df_papers.at[index, 'keywords'] = keywords_list
                             print(str(index) + " [Success][Keywords] " + str(urls[0]) + " " + str(keywords_list))
                             is_keyword = True

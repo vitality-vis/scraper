@@ -5,7 +5,7 @@ import ast
 import os
 
 # Internal modules
-import paperscraper.config as config
+import config
 
 
 def main():

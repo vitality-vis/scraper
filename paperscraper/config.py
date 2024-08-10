@@ -1,7 +1,7 @@
 import os
 
 # ToDo: [Update as required] Paths to important input/output files
-path_input_raw = os.path.join("..", "assets", "data", "dblp-2020-11-01.xml")
+path_input_raw = os.path.join("..", "assets", "data", "dblp.xml")
 path_input = os.path.join("..", "assets", "data", "dblp_processed.xml")
 path_output = os.path.join("..", "output", "output.tsv")
 path_postprocessing_output = os.path.join("..", "output", "output_processed.tsv")
@@ -9,13 +9,14 @@ path_unique_venues = os.path.join("..", "output", "unique_venues.tsv")
 path_unique_keywords = os.path.join("..", "output", "unique_keywords.tsv")
 path_unique_authors = os.path.join("..", "output", "unique_authors.tsv")
 path_logfile = os.path.join("..", "output", "log.tsv")
+path_prior_vitality_corpus = os.path.join("..", "assets", "data", "VitaLITy-1.0.0.json")
 
 # ChromeDriver
-# TODO Option 1: Manual Download  from https://chromedriver.chromium.org/downloads (e.g., ChromeDriver 86.0.4240.22) and save to a known location in PATH
-# TODO Option 2: Install using brew: `brew cask install chromedriver`. It is generally saved to `/usr/local/bin/chromedriver`
+# TODO Option 1: Manual Download  from https://chromedriver.chromium.org/downloads (e.g., ChromeDriver 114.0.5735.90) and save to a known location in PATH
+# TODO Option 2: Install using brew: `brew install chromedriver --cask`. It was saved to `/opt/homebrew/bin/chromedriver` on MacOSX Sonoma 14.6
 # For Mac OSX, the executable will have to be quarantined - `xattr -d com.apple.quarantine chromedriver`
 # Set the chromedriver path below.
-path_chromedriver = os.path.join("..", "assets", "chromedriver")  # /usr/local/bin/chromedriver
+path_chromedriver = os.path.join("/", "opt", "homebrew", "bin", "chromedriver")  
 
 # ChromeOptions binary
 # TODO: [Update this path depending on where it is located in your Operating System]

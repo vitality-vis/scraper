@@ -5,13 +5,24 @@ import pandas as pd
 import os
 
 # Internal modules
-import paperscraper.config as config
+import config
 
 
 # FILTER the huge dblp_processed.xml file to keep just the data that we are interested in.
-# TODO: Re-run this if (1) The <config.interesting_venues> list has changed or (2) There is a NEW DBLP snapshot .
+# TODO: Re-run this if (1) The <config.interesting_venues> list has changed or (2) There is a NEW DBLP snapshot.
 def main():
+
+    # Articles already scraped from previously scraped VitaLITy corpus
+    papers_existing_in_prev_corpus = dict()
+    count_papers_existing = 0
+    count_papers_new = 0
+    if os.path.exists(config.path_prior_vitality_corpus):
+        df_prev_corpus = pd.read_json(config.path_prior_vitality_corpus)
+        df_prev_corpus["unique_article_identifier"] = df_prev_corpus['Title'].astype(str) + '\t' + df_prev_corpus['Source'].astype(str) + '\t' + df_prev_corpus['Year'].astype(str)
+        papers_existing_in_prev_corpus = df_prev_corpus.set_index("unique_article_identifier").T.to_dict()
+
     result_list = list()
+    result_counter = 0
     src_set = set()
     for event, elem in ET.iterparse(config.path_input, encoding='UTF-8', recover=True):
         obj = dict()
@@ -38,22 +49,39 @@ def main():
                 if child.text not in src_set:
                     src_set.add(child.text)
                     print(child.text)
-
+                    
         if to_add:
+            # Initialize the fields that we are going to scrape.
+            # TODO: Update these if more fields are added.
+            obj["abstract"] = "Not Scraped"
+            obj["keywords"] = "Not Scraped"
+            obj["citation_count"] = "Not Scraped"
+
+            # Update the above fields if they have already been scraped before.
+            _title = obj["title"] if obj["title"] is not None else ""
+            _source = obj["source"] if obj["source"] is not None else ""
+            unique_identifier = _title + "\t" + _source + "\t" + obj["year"]
+            if unique_identifier in papers_existing_in_prev_corpus:
+                obj["abstract"] = papers_existing_in_prev_corpus[unique_identifier]["Abstract"]
+                obj["keywords"] = papers_existing_in_prev_corpus[unique_identifier]["Keywords"]
+                count_papers_existing += 1
+            else:
+                count_papers_new += 1
+
+            result_counter += 1
+            if result_counter % 5000 == 0:
+                print(count_papers_existing, count_papers_new)
+
             result_list.append(obj)
+
+    # Final tally
+    print(count_papers_existing, count_papers_new)
 
     # Create a DataFrame
     df_result_list = pd.DataFrame(result_list)
 
-    # Initialize the fields that we are going to scrape.
-    # TODO: Update these if more fields are added.
-    df_result_list["abstract"] = "Not Scraped"
-    df_result_list["keywords"] = "Not Scraped"
-    df_result_list["citation_count"] = "Not Scraped"
-
     # Save to disk
     df_result_list.to_csv(config.path_output, sep='\t', header=True)
-
 
 if __name__ == "__main__":
     main()

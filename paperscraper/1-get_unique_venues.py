@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 # Internal modules
-import paperscraper.config as config
+import config
 
 
 # Find Unique venues from the DBLP xml looking ONLY for ["article","inproceedings","incollection"] and ["journal", "booktitle"].

@@ -10,7 +10,7 @@ import string
 
 
 # Internal modules
-import paperscraper.config as config
+import config
 regex = re.compile(r'[\n\r\t]')
 set_punctuations = set(string.punctuation)
 set_numbers = set("0123456789")
