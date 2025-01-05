@@ -68,4 +68,4 @@ The software is available under the [MIT License](https://github.com/vitality-vi
 
 
 ### Contact
-If you have any questions, feel free to [open an issue](https://github.com/vitality-vis/scraper/issues/new/choose) or contact [Arpit Narechania](https://arpitnarechania.github.io).
+If you have any questions, feel free to [open an issue](https://github.com/vitality-vis/scraper/issues/new/choose) or contact [Arpit Narechania](https://narechania.com).
